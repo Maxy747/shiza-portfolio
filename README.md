@@ -32,3 +32,5 @@ Site by [Max](https://github.com/Maxy747). Layout and motion inspired by Maheen 
 ## Saved version and new portrait
 
 The previous live portfolio remains at `saved-portfolio.html`, with its original `assets/turn/` frames. The homepage now uses seven striped-shirt portraits in `assets/striped-turn/`. Each frame is drawn opaque to avoid double eyes from blending. Source images are generated reference edits; transitions remain discrete.
+
+The current homepage uses 13 frames in `assets/striped-turn-v2/`, with three extra poses between center and the first turn on each side.

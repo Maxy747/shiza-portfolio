@@ -433,7 +433,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     <h1 class="hero__name">Shizanourin</h1>
     <span class="hero__tag"><i></i>Cyber · Projects · Content</span>
     <div class="portrait-stage" id="portrait-stage">
-      <img class="portrait" id="portrait" src="assets/striped-turn/front.png" alt="Illustrated portrait of Shizanourin" width="1086" height="1448">
+      <img class="portrait" id="portrait" src="assets/striped-turn-v2/front.png" alt="Illustrated portrait of Shizanourin" width="1086" height="1448">
     </div>
     <p class="hero__intro">Based in Kuwait City. <b>I secure systems, keep projects on track and make content people actually watch.</b> Glad you stopped by 💜</p>
     <a class="hero__cue" href="#services">Scroll to see what I do <span aria-hidden="true">↓</span></a>
@@ -842,8 +842,8 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
 
 <script>
 (() => {
-  // Head-turn frames: set count to the number of frames in assets/striped-turn/ (000.webp …) and front to the straight-on frame.
-  const TURN = { count: 7, front: 3, positions: [-1, -2/3, -1/3, 0, 1/3, 2/3, 1], src: i => `assets/striped-turn/${String(i).padStart(3, '0')}.png` };
+  // Head-turn frames: set count to the number of frames in assets/striped-turn-v2/ (000.webp …) and front to the straight-on frame.
+  const TURN = { count: 13, front: 6, positions: [-1,-0.6666666666666666,-0.3333333333333333,-0.25,-0.16666666666666666,-0.08333333333333333,0,0.08333333333333333,0.16666666666666666,0.25,0.3333333333333333,0.6666666666666666,1], src: i => `assets/striped-turn-v2/${String(i).padStart(3, '0')}.png` };
   const root = document.documentElement;
   // Native scrolling; in-page jumps glide via the browser's own smooth scroll.
   const goTo = y => scrollTo({ top: typeof y === 'number' ? y : y.getBoundingClientRect().top + scrollY, behavior: 'smooth' });
@@ -1111,8 +1111,8 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
   }
 
   // head-turn: scrub through frames (left → front → right) as the cursor moves.
-  // Drop frames into assets/striped-turn/000.webp … and set TURN.count / TURN.front.
-  // Frame count comes from assets/striped-turn/frames.json (written by tools/build_frames.py); the values above are the fallback.
+  // Drop frames into assets/striped-turn-v2/000.webp … and set TURN.count / TURN.front.
+  // Frame count comes from assets/striped-turn-v2/frames.json (written by tools/build_frames.py); the values above are the fallback.
   const startTurn = () => {
     if (!TURN.count) return;
     const pic = document.getElementById('portrait');
@@ -1189,7 +1189,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     }
     loopFns.push(() => { cur += (target - cur) * .12; paint(); });
   };
-  fetch('assets/striped-turn/frames.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null)
+  fetch('assets/striped-turn-v2/frames.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null)
     .then(j => {
       if (!j || !(j.count > 0)) return;
       TURN.count = j.count; TURN.front = clamp(j.front ?? 0, 0, j.count - 1);
