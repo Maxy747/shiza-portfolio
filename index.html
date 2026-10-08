@@ -325,6 +325,40 @@ tr.flag td { background: rgba(178, 73, 47, .28); }
 .btn.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
 .btn:hover { background: var(--olive); color: var(--sand); }
 .socials { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.contact__grid { width: 100%; max-width: 1100px; text-align: left; display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 2rem clamp(2rem, 5vw, 4rem); align-items: start; margin-top: clamp(1.5rem, 4vw, 2.5rem); }
+.cform { background: var(--kraft); border-radius: 22px; padding: clamp(1.25rem, 3vw, 2rem); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 1.25rem; box-shadow: 0 30px 60px -40px rgba(39, 43, 20, .55); }
+.cform__row { display: flex; flex-direction: column; gap: .45rem; min-width: 0; }
+.cform__wide, .cform__need { grid-column: 1 / -1; }
+.cform label, .cform legend { font-size: .95rem; font-weight: 600; }
+.cform input:not([type="radio"]), .cform textarea { width: 100%; font: 400 1rem var(--font); color: var(--ink); background: var(--shirt); border: 1.5px solid rgba(39, 43, 20, .2); border-radius: 14px; padding: .8rem 1rem; }
+.cform input::placeholder, .cform textarea::placeholder { color: rgba(39, 43, 20, .45); }
+.cform textarea { resize: vertical; min-height: 7rem; }
+.cform input:focus, .cform textarea:focus { outline: 2px solid var(--olive); outline-offset: 1px; border-color: transparent; }
+.cform input[aria-invalid="true"], .cform textarea[aria-invalid="true"] { border-color: var(--alert); }
+.cform__need { border: 0; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.cform__need legend { margin-bottom: .55rem; padding: 0; }
+.cform__need label { position: relative; display: flex; align-items: center; gap: .5rem; cursor: pointer; border-radius: 999px; padding: .6rem 1rem; font-weight: 500; box-shadow: inset 0 0 0 1.5px rgba(39, 43, 20, .25); transition: background .2s, color .2s; }
+.cform__need label:has(input:checked) { background: var(--ink); color: var(--sand); box-shadow: 0 0 0 2px var(--kraft), 0 0 0 3.5px var(--ink); }
+.cform__need label:has(input:focus-visible) { outline: 2px solid var(--olive); outline-offset: 4px; }
+.cform__need input { position: absolute; opacity: 0; pointer-events: none; }
+.cform__trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.cform__foot { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; }
+.cform button[disabled] { opacity: .6; cursor: progress; }
+.contact .cform__status { margin: 0; font-size: .95rem; color: var(--olive-deep); max-width: none; }
+.contact .cform__status[data-kind="ok"] { color: var(--olive); font-weight: 600; }
+.contact .cform__status[data-kind="error"] { color: var(--alert); font-weight: 600; }
+.contact__side { padding-top: .5rem; display: grid; gap: .9rem; justify-items: start; }
+.contact__me { display: flex; align-items: center; gap: 1rem; margin-bottom: .6rem; }
+.contact__me img { width: 4.5rem; height: 4.5rem; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px var(--sand), 0 0 0 5px var(--olive); }
+.contact .contact__me p { display: flex; flex-direction: column; margin: 0; max-width: none; color: var(--ink); }
+.contact__me strong { font-size: 1.15rem; }
+.contact__me span { color: var(--olive-deep); }
+.contact .contact__label { margin: 0; color: var(--olive-deep); }
+.contact__social { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .75rem; }
+.social { display: inline-flex; align-items: center; gap: .6rem; padding: .55rem 1.1rem .55rem .6rem; border-radius: 999px; text-decoration: none; font-size: 1.1rem; font-weight: 500; box-shadow: inset 0 0 0 1.5px rgba(39, 43, 20, .25); transition: background .2s, box-shadow .2s; }
+.social svg { border-radius: 22%; flex: none; }
+.social:hover { background: var(--shirt); box-shadow: inset 0 0 0 1.5px var(--ink); }
+@media (max-width: 760px) { .contact__grid, .cform { grid-template-columns: 1fr; } }
 footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 24px var(--gutter) 110px; border-top: 1px solid var(--line); color: var(--olive); font-size: 14px; }
 
 /* buddy + top */
@@ -743,12 +777,54 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
   <section class="contact wrap" id="contact">
     <span class="kicker">Contact</span>
     <h2 class="display">Got a system, a project or a story?</h2>
-    <p>Whether it's a project to run, a system to secure or a collab idea, I'd love to hear about it. Email is the quickest way to reach me.</p>
+    <p>Whether it's a project to run, a system to secure or a collab idea, I'd love to hear about it. Send a message below or email me directly.</p>
     <div class="contact__email" id="email">shizanourin1@gmail.com</div>
     <div class="socials">
       <button class="btn" type="button" id="copy">Copy email</button>
-      <a class="btn ghost" href="https://www.linkedin.com/in/shizanourin/" target="_blank" rel="noopener">LinkedIn ↗</a>
-      <a class="btn ghost" href="https://www.instagram.com/shizzaaaaaaaaaaaa/" target="_blank" rel="noopener">Instagram ↗</a>
+    </div>
+
+    <div class="contact__grid">
+      <form class="cform" id="cform" data-endpoint="https://formsubmit.co/ajax/shizanourin1@gmail.com" novalidate>
+        <div class="cform__row">
+          <label for="cf-name">Your name</label>
+          <input id="cf-name" name="name" type="text" autocomplete="name" placeholder="e.g. Sara Khan" required>
+        </div>
+        <div class="cform__row">
+          <label for="cf-email">Your email</label>
+          <input id="cf-email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required>
+        </div>
+        <fieldset class="cform__need">
+          <legend>What do you need?</legend>
+          <label><input type="radio" name="need" value="Project management" checked> Project management</label>
+          <label><input type="radio" name="need" value="Cybersecurity or IT"> Cybersecurity or IT</label>
+          <label><input type="radio" name="need" value="Content or a collab"> Content or a collab</label>
+        </fieldset>
+        <div class="cform__row cform__wide">
+          <label for="cf-msg">Tell me a little about you or your project</label>
+          <textarea id="cf-msg" name="message" rows="4" placeholder="We're kicking off a client project next month and need someone to keep it on track…" required></textarea>
+        </div>
+        <input class="cform__trap" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="cform__foot cform__wide">
+          <button class="btn" type="submit" id="cf-send">Send message</button>
+          <p class="cform__status" id="cf-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+
+      <aside class="contact__side">
+        <div class="contact__me">
+          <img src="assets/ig/pfp.webp" alt="" width="128" height="128">
+          <p><strong>Shizanourin T.A.</strong><span>Project Management Specialist · Kuwait City</span></p>
+        </div>
+        <p class="contact__label">Or find me on</p>
+        <ul class="contact__social">
+          <li><a class="social" href="https://www.linkedin.com/in/shizanourin/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><rect width="24" height="24" rx="5" fill="#0a66c2"/><path fill="#fff" d="M6.9 9.6h2.5V18H6.9zM8.15 5.8a1.45 1.45 0 1 1 0 2.9 1.45 1.45 0 0 1 0-2.9zM11 9.6h2.4v1.15h.04c.33-.63 1.15-1.3 2.37-1.3 2.54 0 3 1.67 3 3.84V18h-2.5v-4.1c0-.98-.02-2.24-1.37-2.24-1.37 0-1.58 1.07-1.58 2.17V18H11z"/></svg>
+            LinkedIn</a></li>
+          <li><a class="social" href="https://www.instagram.com/shizzaaaaaaaaaaaa/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><defs><linearGradient id="ig-g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".35" stop-color="#fa7e1e"/><stop offset=".6" stop-color="#d62976"/><stop offset=".8" stop-color="#962fbf"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><rect width="24" height="24" rx="6" fill="url(#ig-g)"/><rect x="5.5" y="5.5" width="13" height="13" rx="4" fill="none" stroke="#fff" stroke-width="1.7"/><circle cx="12" cy="12" r="3.1" fill="none" stroke="#fff" stroke-width="1.7"/><circle cx="16.2" cy="7.8" r="1" fill="#fff"/></svg>
+            Instagram</a></li>
+        </ul>
+      </aside>
     </div>
   </section>
 </main>
@@ -869,6 +945,41 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     const fallback = () => { const r = document.createRange(); r.selectNodeContents(email); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); copy.textContent = 'Selected, press Ctrl+C'; setTimeout(() => copy.textContent = 'Copy email', 2400); };
     try { navigator.clipboard.writeText(addr).then(done, fallback); } catch { fallback(); }
   });
+  // contact form: posts to FormSubmit, which emails each message to Shiza.
+  // The very first submission makes FormSubmit send her a one-time "Activate form" email.
+  const form = document.getElementById('cform'), send = document.getElementById('cf-send'), status = document.getElementById('cf-status');
+  const formNote = (msg, kind = '') => { status.textContent = msg; status.dataset.kind = kind; };
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const f = new FormData(form);
+    if (f.get('_honey')) return; // bots fill the hidden field
+    const fields = { name: form.elements.name, email: form.elements.email, message: form.elements.message };
+    let bad = null;
+    for (const el of Object.values(fields)) {
+      const v = el.value.trim();
+      const ok = v !== '' && (el.type !== 'email' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+      el.setAttribute('aria-invalid', String(!ok)); if (!ok && !bad) bad = el;
+    }
+    if (bad) { formNote(bad === fields.email && bad.value ? 'That email address doesn’t look right.' : 'Please fill in your name, email and a short message.', 'error'); bad.focus(); return; }
+    send.disabled = true; send.textContent = 'Sending…'; formNote('');
+    try {
+      const res = await fetch(form.dataset.endpoint, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: f.get('name').trim(), email: f.get('email').trim(), need: f.get('need'), message: f.get('message').trim(),
+          _subject: `Portfolio message: ${f.get('need')}`, _template: 'table', _replyto: f.get('email').trim()
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || `HTTP ${res.status}`);
+      form.reset(); Object.values(fields).forEach(el => el.removeAttribute('aria-invalid'));
+      formNote('Thanks! Your message is on its way, I’ll get back to you soon.', 'ok');
+    } catch (err) {
+      formNote('Couldn’t send that right now. Please email me at shizanourin1@gmail.com instead.', 'error');
+    } finally { send.disabled = false; send.textContent = 'Send message'; }
+  });
+  form.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', () => el.removeAttribute('aria-invalid')));
+
   const toTop = document.querySelector('.to-top');
   const tt = () => toTop.classList.toggle('is-shown', scrollY > innerHeight * .8);
   addEventListener('scroll', tt, { passive: true }); tt();
@@ -925,7 +1036,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     el.innerHTML = words.map((w, i) => `<span class="word" aria-hidden="true"><span style="--i:${i}">${w.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span></span>`).join(' ');
     el.dataset.reveal = 'words';
   });
-  document.querySelectorAll('.services__intro p, .note, .case__body, .screen, .role-card, .duties, .about__frame, .about__text p, .facts, .stack,.contact__email, .socials, .contact p').forEach(el => { el.dataset.reveal ??= 'up'; });
+  document.querySelectorAll('.services__intro p, .note, .case__body, .screen, .role-card, .duties, .about__frame, .about__text p, .facts, .stack,.contact__email, .socials, .contact > p, .cform, .contact__side').forEach(el => { el.dataset.reveal ??= 'up'; });
   document.querySelectorAll('.stats__list, .projects').forEach(list => [...list.children].forEach((c, i) => { c.dataset.reveal = 'up'; c.style.setProperty('--i', Math.min(i, 8)); }));
   const show = el => { el.classList.add('in'); el.querySelectorAll('[data-count]').forEach(countUp); };
   const rio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { show(e.target); rio.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px', threshold: .1 });
