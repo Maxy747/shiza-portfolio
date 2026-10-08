@@ -28,3 +28,7 @@ If the folder has a `frame-manifest.json` (Codex writes one), its order, per-fra
 ## Credits
 
 Site by [Max](https://github.com/Maxy747). Layout and motion inspired by Maheen Dossal's portfolio, used with permission.
+
+## Saved version and new portrait
+
+The previous live portfolio remains at `saved-portfolio.html`, with its original `assets/turn/` frames. The homepage now uses seven striped-shirt portraits in `assets/striped-turn/`. Each frame is drawn opaque to avoid double eyes from blending. Source images are generated reference edits; transitions remain discrete.

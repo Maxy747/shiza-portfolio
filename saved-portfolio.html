@@ -70,9 +70,9 @@ main, .bar, footer { position: relative; z-index: 1; }
   font-weight: 800; font-size: clamp(110px, 26vw, 330px); line-height: .8; letter-spacing: -.035em;
   font-variation-settings: "wght" 800, "wdth" 75; white-space: nowrap; user-select: none;
 }
-.portrait-stage { position: absolute; left: 50%; bottom: 0; translate: -50% 0; width: clamp(280px, 34vw, 480px); max-width: 100%; z-index: 2; perspective: 900px; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.portrait-stage { position: absolute; left: 50%; bottom: 0; translate: -50% 0; width: clamp(320px, 44vw, 600px); max-width: 100%; z-index: 2; perspective: 900px; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .portrait {
-  display: block; width: 100%; height: auto; border-radius: 48% 48% 0 0; transform-origin: 50% 100%;
+  display: block; width: 100%; height: auto; transform-origin: 50% 100%;
   -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 98%); mask-image: linear-gradient(to bottom, #000 70%, transparent 98%);
   filter: drop-shadow(0 18px 30px rgba(39, 43, 20, .25));
 }
@@ -399,7 +399,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     <h1 class="hero__name">Shiza</h1>
     <span class="hero__tag"><i></i>Cyber · Projects · Content</span>
     <div class="portrait-stage" id="portrait-stage">
-      <img class="portrait" id="portrait" src="assets/striped-turn/front.png" alt="Illustrated portrait of Shizanourin" width="1086" height="1448">
+      <img class="portrait" id="portrait" src="assets/turn/front.webp" alt="Illustrated portrait of Shizanourin" width="760" height="716">
     </div>
     <p class="hero__intro">Based in Kuwait City. <b>I secure systems, keep projects on track and make content people actually watch.</b> Glad you stopped by 💜</p>
     <a class="hero__cue" href="#services">Scroll to see what I do <span aria-hidden="true">↓</span></a>
@@ -766,8 +766,8 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
 
 <script>
 (() => {
-  // Head-turn frames: set count to the number of frames in assets/striped-turn/ (000.webp …) and front to the straight-on frame.
-  const TURN = { count: 7, front: 3, positions: [-1, -2/3, -1/3, 0, 1/3, 2/3, 1], src: i => `assets/striped-turn/${String(i).padStart(3, '0')}.png` };
+  // Head-turn frames: set count to the number of frames in assets/turn/ (000.webp …) and front to the straight-on frame.
+  const TURN = { count: 7, front: 3, src: i => `assets/turn/${String(i).padStart(3, '0')}.webp` };
   const root = document.documentElement;
   // Native scrolling; in-page jumps glide via the browser's own smooth scroll.
   const goTo = y => scrollTo({ top: typeof y === 'number' ? y : y.getBoundingClientRect().top + scrollY, behavior: 'smooth' });
@@ -1000,8 +1000,8 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
   }
 
   // head-turn: scrub through frames (left → front → right) as the cursor moves.
-  // Drop frames into assets/striped-turn/000.webp … and set TURN.count / TURN.front.
-  // Frame count comes from assets/striped-turn/frames.json (written by tools/build_frames.py); the values above are the fallback.
+  // Drop frames into assets/turn/000.webp … and set TURN.count / TURN.front.
+  // Frame count comes from assets/turn/frames.json (written by tools/build_frames.py); the values above are the fallback.
   const startTurn = () => {
     if (!TURN.count) return;
     const pic = document.getElementById('portrait');
@@ -1021,9 +1021,16 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
         shown = best; draw(best);
         return;
       }
+      // Evenly spaced sets: crossfade between the two nearest frames so a few angles read as a smooth turn.
       const pos = cur < 0 ? TURN.front * (1 + cur) : TURN.front + (TURN.count - 1 - TURN.front) * cur;
-      const best = Math.round(pos);
-      if (best !== shown && ready(best)) { shown = best; draw(best); }
+      if (Math.abs(pos - shown) < .01) return;
+      // Hold each angle crisp and only blend in a short window around the switch, so faces never double up for long.
+      let a = Math.floor(pos); const b = Math.min(a + 1, TURN.count - 1), k = clamp((pos - a - .4) / .2, 0, 1);
+      if (!ready(a)) return;
+      shown = pos;
+      c2.clearRect(0, 0, cvs.width, cvs.height);
+      c2.globalAlpha = 1; c2.drawImage(imgs[a], 0, 0, cvs.width, cvs.height);
+      if (k > .03 && b !== a && ready(b)) { c2.globalAlpha = k; c2.drawImage(imgs[b], 0, 0, cvs.width, cvs.height); c2.globalAlpha = 1; }
     };
     load(TURN.front).decode().then(() => {
       cvs.width = imgs[TURN.front].naturalWidth; cvs.height = imgs[TURN.front].naturalHeight;
@@ -1078,7 +1085,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     }
     loopFns.push(() => { cur += (target - cur) * .12; paint(); });
   };
-  fetch('assets/striped-turn/frames.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null)
+  fetch('assets/turn/frames.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null)
     .then(j => {
       if (!j || !(j.count > 0)) return;
       TURN.count = j.count; TURN.front = clamp(j.front ?? 0, 0, j.count - 1);
