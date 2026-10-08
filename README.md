@@ -1,7 +1,7 @@
 # Shizanourin T.A. — portfolio
 
 Single-page portfolio for Shiza: project management, cybersecurity and content creation.
-Plain HTML/CSS/JS in `index.html`, no build step. Smooth scrolling uses [Lenis](https://github.com/darkroomengineering/lenis) from jsDelivr.
+Plain HTML/CSS/JS in `index.html`, no build step and no libraries. Scrolling is native; the scroll-linked motion is hand-written.
 
 Live: https://maxy747.github.io/shiza-portfolio/
 
@@ -23,7 +23,7 @@ python tools/build_frames.py "C:\Users\MoeLustHer\Documents\Codex\2026-10-08\a-s
 git add assets/turn && git commit -m "Update head-turn frames" && git push
 ```
 
-Name the source images so they sort left → right (`01-…`, `02-…`). The straight-on frame is the one named `center`/`front`, or pass `--front N`. All frames must be the same size. More frames = smoother turn; 15–30 looks close to continuous.
+If the folder has a `frame-manifest.json` (Codex writes one), its order, per-frame angles and center frame are used. Otherwise name the source images so they sort left → right (`01-…`, `02-…`). The straight-on frame is the one named `center`/`front`, or pass `--front N`. All frames must be the same size. More frames = smoother turn; 15–30 looks close to continuous.
 
 ## Credits
 
