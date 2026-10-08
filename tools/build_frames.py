@@ -39,7 +39,27 @@ def main() -> int:
     ap.add_argument("--quality", type=int, default=86, help="WebP quality (default 86)")
     args = ap.parse_args()
 
-    files = sorted((f for f in args.source.iterdir() if f.suffix.lower() in IMAGE_EXTS), key=natural_key)
+    # A frame-manifest.json in the source folder sets the order, per-frame positions (-1..1) and the
+    # center frame: {"centerIndex": n, "frames": [{"file": "...", "position": -1.0}, ...]}.
+    # Without one, every image is used in filename order with evenly spaced positions.
+    manifest_path = args.source / "frame-manifest.json"
+    positions = None
+    if manifest_path.exists():
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        files = [args.source / f["file"] for f in manifest["frames"]]
+        positions = [float(f["position"]) for f in manifest["frames"]]
+        missing = [f.name for f in files if not f.exists()]
+        if missing:
+            print(f"Manifest lists files that don't exist: {missing}", file=sys.stderr)
+            return 1
+        if positions != sorted(positions):
+            print("Manifest positions must go from left (-1) to right (+1).", file=sys.stderr)
+            return 1
+        if args.front is None and "centerIndex" in manifest:
+            args.front = int(manifest["centerIndex"])
+        print(f"Using {manifest_path.name}: {len(files)} frames.")
+    else:
+        files = sorted((f for f in args.source.iterdir() if f.suffix.lower() in IMAGE_EXTS), key=natural_key)
     if len(files) < 2:
         print(f"Need at least 2 images in {args.source}, found {len(files)}.", file=sys.stderr)
         return 1
@@ -90,7 +110,10 @@ def main() -> int:
         if i == front:
             c.save(OUT_DIR / "front.webp", "WEBP", quality=args.quality, method=6)
 
-    (OUT_DIR / "frames.json").write_text(json.dumps({"count": len(cuts), "front": front}, indent=2) + "\n")
+    meta = {"count": len(cuts), "front": front}
+    if positions:
+        meta["positions"] = positions
+    (OUT_DIR / "frames.json").write_text(json.dumps(meta, indent=2) + "\n")
     print(f"Wrote {len(cuts)} frames to {OUT_DIR} (front = {front}: {files[front].name}).")
     print("If index.html's <img id=\"portrait\"> width/height differ from the new frame size, update them to match.")
     return 0

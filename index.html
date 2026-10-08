@@ -384,7 +384,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     <h1 class="hero__name">Shiza</h1>
     <span class="hero__tag"><i></i>Cyber · Projects · Content</span>
     <div class="portrait-stage" id="portrait-stage">
-      <img class="portrait" id="portrait" src="assets/turn/front.webp" alt="Illustrated portrait of Shizanourin" width="760" height="715">
+      <img class="portrait" id="portrait" src="assets/turn/front.webp" alt="Illustrated portrait of Shizanourin" width="760" height="716">
     </div>
     <p class="hero__intro">Based in Kuwait City. <b>I secure systems, keep projects on track and make content people actually watch.</b> Glad you stopped by 💜</p>
     <a class="hero__cue" href="#services">Scroll to see what I do <span aria-hidden="true">↓</span></a>
@@ -997,8 +997,18 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     const load = i => imgs[i] || (imgs[i] = Object.assign(new Image(), { src: TURN.src(i), decoding: 'async' }));
     const ready = i => imgs[i]?.complete && imgs[i].naturalWidth > 0;
     let target = 0, cur = 0, shown = -1;
-    // Crossfade between the two nearest frames so 7 angles read as a smooth turn.
+    const draw = i => { c2.clearRect(0, 0, cvs.width, cvs.height); c2.globalAlpha = 1; c2.drawImage(imgs[i], 0, 0, cvs.width, cvs.height); };
     const paint = () => {
+      // Manifest frames carry their own head angle (-1 left … +1 right): show the closest one, crisp.
+      // These are separately generated images, so blending two of them would double the features.
+      if (TURN.positions) {
+        let best = TURN.front, bestD = Infinity;
+        TURN.positions.forEach((p, i) => { const d = Math.abs(p - cur); if (d < bestD && ready(i)) { bestD = d; best = i; } });
+        if (best === shown || !ready(best)) return;
+        shown = best; draw(best);
+        return;
+      }
+      // Evenly spaced sets: crossfade between the two nearest frames so a few angles read as a smooth turn.
       const pos = cur < 0 ? TURN.front * (1 + cur) : TURN.front + (TURN.count - 1 - TURN.front) * cur;
       if (Math.abs(pos - shown) < .01) return;
       // Hold each angle crisp and only blend in a short window around the switch, so faces never double up for long.
@@ -1063,7 +1073,11 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     loopFns.push(() => { cur += (target - cur) * .12; paint(); });
   };
   fetch('assets/turn/frames.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null)
-    .then(j => { if (j && j.count > 0) { TURN.count = j.count; TURN.front = clamp(j.front ?? 0, 0, j.count - 1); } })
+    .then(j => {
+      if (!j || !(j.count > 0)) return;
+      TURN.count = j.count; TURN.front = clamp(j.front ?? 0, 0, j.count - 1);
+      if (Array.isArray(j.positions) && j.positions.length === j.count) TURN.positions = j.positions;
+    })
     .catch(() => {}).finally(startTurn);
 
   // what I do: pinned sideways scroll (desktop). Panels scale up as they reach the centre.
