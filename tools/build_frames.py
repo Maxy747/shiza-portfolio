@@ -24,7 +24,7 @@ from pathlib import Path
 from PIL import Image
 
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp"}
-OUT_DIR = Path(__file__).resolve().parent.parent / "assets" / "turn"
+DEFAULT_OUT = Path(__file__).resolve().parent.parent / "assets" / "turn"
 
 
 def natural_key(path: Path):
@@ -37,7 +37,9 @@ def main() -> int:
     ap.add_argument("--front", type=int, help="index of the straight-on frame (default: auto)")
     ap.add_argument("--width", type=int, default=760, help="output width in px (default 760)")
     ap.add_argument("--quality", type=int, default=86, help="WebP quality (default 86)")
+    ap.add_argument("--out", type=Path, default=DEFAULT_OUT, help="output folder (default assets/turn)")
     args = ap.parse_args()
+    OUT_DIR = args.out
 
     # A frame-manifest.json in the source folder sets the order, per-frame positions (-1..1) and the
     # center frame: {"centerIndex": n, "frames": [{"file": "...", "position": -1.0}, ...]}.
@@ -64,10 +66,15 @@ def main() -> int:
         print(f"Need at least 2 images in {args.source}, found {len(files)}.", file=sys.stderr)
         return 1
 
+    # Frames must line up. A few stray pixels (generators sometimes add one) are trimmed off the
+    # right/bottom edge; anything bigger means the frames don't match and is refused.
     sizes = {Image.open(f).size for f in files}
+    common = (min(w for w, _ in sizes), min(h for _, h in sizes))
     if len(sizes) > 1:
-        print(f"All frames must be the same size; found {sorted(sizes)}.", file=sys.stderr)
-        return 1
+        if max(w for w, _ in sizes) - common[0] > 4 or max(h for _, h in sizes) - common[1] > 4:
+            print(f"All frames must be the same size; found {sorted(sizes)}.", file=sys.stderr)
+            return 1
+        print(f"Frame sizes differ slightly {sorted(sizes)}; trimming all to {common}.")
 
     try:
         from rembg import new_session, remove
@@ -79,7 +86,7 @@ def main() -> int:
     session = new_session("isnet-general-use")
     cuts = []
     for f in files:
-        cuts.append(remove(Image.open(f).convert("RGB"), session=session, post_process_mask=True))
+        cuts.append(remove(Image.open(f).convert("RGB").crop((0, 0, *common)), session=session, post_process_mask=True))
         print("  ", f.name)
 
     # One shared crop box (union of every subject) keeps the shoulders locked in place.

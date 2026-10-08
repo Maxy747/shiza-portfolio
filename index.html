@@ -70,9 +70,9 @@ main, .bar, footer { position: relative; z-index: 1; }
   font-weight: 800; font-size: clamp(56px, 18vw, 300px); line-height: .8; letter-spacing: -.035em;
   font-variation-settings: "wght" 800, "wdth" 75; white-space: nowrap; user-select: none;
 }
-.portrait-stage { position: absolute; left: 50%; bottom: 0; translate: -50% 0; width: clamp(260px, min(30vw, calc((100vh - 255px) * .75)), 420px); max-width: 100%; z-index: 2; perspective: 900px; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.portrait-stage { position: absolute; left: 50%; bottom: 0; translate: -50% 0; width: clamp(300px, min(40vw, calc((100vh - 170px) / 1.2526)), 560px); max-width: 100%; z-index: 2; perspective: 900px; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .portrait {
-  display: block; width: 100%; height: auto; border-radius: 48% 48% 0 0; transform-origin: 50% 100%;
+  display: block; width: 100%; height: auto; transform-origin: 50% 100%;
   -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 98%); mask-image: linear-gradient(to bottom, #000 70%, transparent 98%);
   filter: drop-shadow(0 18px 30px rgba(39, 43, 20, .25));
 }
@@ -403,7 +403,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
   .hero { min-height: 0; display: flex; flex-direction: column; align-items: center; padding-top: 112px; gap: 0; }
   .hero__tag { top: 70px; font-size: 11px; }
   .hero__name { position: relative; top: auto; font-size: 19vw; }
-  .portrait-stage { position: relative; left: auto; bottom: auto; translate: none; width: min(100%, 440px); margin-top: -1vw; }
+  .portrait-stage { position: relative; left: auto; bottom: auto; translate: none; width: min(100%, 440px); margin-top: -9vw; }
   .hero__intro { position: relative; left: auto; bottom: auto; max-width: none; padding-inline: var(--gutter); margin-top: -8px; z-index: 3; }
   .hero__cue { position: relative; right: auto; bottom: auto; align-self: flex-start; margin: 20px var(--gutter) 8px; }
   .buddy__say { font-size: 12.5px; padding: 7px 12px; border-radius: 14px; line-height: 1.25; max-width: calc(100vw - 190px); }
@@ -433,7 +433,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     <h1 class="hero__name">Shizanourin</h1>
     <span class="hero__tag"><i></i>Cyber · Projects · Content</span>
     <div class="portrait-stage" id="portrait-stage">
-      <img class="portrait" id="portrait" src="assets/striped-turn-v2/front.png" alt="Illustrated portrait of Shizanourin" width="1086" height="1448">
+      <img class="portrait" id="portrait" src="assets/striped-cut/front.webp" alt="Illustrated portrait of Shizanourin" width="760" height="952">
     </div>
     <p class="hero__intro">Based in Kuwait City. <b>I secure systems, keep projects on track and make content people actually watch.</b> Glad you stopped by 💜</p>
     <a class="hero__cue" href="#services">Scroll to see what I do <span aria-hidden="true">↓</span></a>
@@ -842,8 +842,8 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
 
 <script>
 (() => {
-  // Head-turn frames: set count to the number of frames in assets/striped-turn-v2/ (000.webp …) and front to the straight-on frame.
-  const TURN = { count: 13, front: 6, positions: [-1,-0.6666666666666666,-0.3333333333333333,-0.25,-0.16666666666666666,-0.08333333333333333,0,0.08333333333333333,0.16666666666666666,0.25,0.3333333333333333,0.6666666666666666,1], src: i => `assets/striped-turn-v2/${String(i).padStart(3, '0')}.png` };
+  // Head-turn frames: set count to the number of frames in assets/striped-cut/ (000.webp …) and front to the straight-on frame.
+  const TURN = { count: 13, front: 6, positions: [-1,-0.6666666666666666,-0.3333333333333333,-0.25,-0.16666666666666666,-0.08333333333333333,0,0.08333333333333333,0.16666666666666666,0.25,0.3333333333333333,0.6666666666666666,1], src: i => `assets/striped-cut/${String(i).padStart(3, '0')}.webp` };
   const root = document.documentElement;
   // Native scrolling; in-page jumps glide via the browser's own smooth scroll.
   const goTo = y => scrollTo({ top: typeof y === 'number' ? y : y.getBoundingClientRect().top + scrollY, behavior: 'smooth' });
@@ -1111,8 +1111,8 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
   }
 
   // head-turn: scrub through frames (left → front → right) as the cursor moves.
-  // Drop frames into assets/striped-turn-v2/000.webp … and set TURN.count / TURN.front.
-  // Frame count comes from assets/striped-turn-v2/frames.json (written by tools/build_frames.py); the values above are the fallback.
+  // Drop frames into assets/striped-cut/000.webp … and set TURN.count / TURN.front.
+  // Frame count comes from assets/striped-cut/frames.json (written by tools/build_frames.py); the values above are the fallback.
   const startTurn = () => {
     if (!TURN.count) return;
     const pic = document.getElementById('portrait');
@@ -1189,7 +1189,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     }
     loopFns.push(() => { cur += (target - cur) * .12; paint(); });
   };
-  fetch('assets/striped-turn-v2/frames.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null)
+  fetch('assets/striped-cut/frames.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null)
     .then(j => {
       if (!j || !(j.count > 0)) return;
       TURN.count = j.count; TURN.front = clamp(j.front ?? 0, 0, j.count - 1);
