@@ -67,10 +67,10 @@ main, .bar, footer { position: relative; z-index: 1; }
 .hero { position: relative; min-height: max(640px, min(100svh, 900px)); overflow: hidden; display: grid; }
 .hero__name {
   position: absolute; left: 0; right: 0; top: clamp(90px, 13vh, 130px); text-align: center;
-  font-weight: 800; font-size: clamp(110px, 26vw, 330px); line-height: .8; letter-spacing: -.035em;
+  font-weight: 800; font-size: clamp(56px, 18vw, 300px); line-height: .8; letter-spacing: -.035em;
   font-variation-settings: "wght" 800, "wdth" 75; white-space: nowrap; user-select: none;
 }
-.portrait-stage { position: absolute; left: 50%; bottom: 0; translate: -50% 0; width: clamp(280px, 34vw, 480px); max-width: 100%; z-index: 2; perspective: 900px; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.portrait-stage { position: absolute; left: 50%; bottom: 0; translate: -50% 0; width: clamp(260px, min(30vw, calc((100vh - 255px) * .75)), 420px); max-width: 100%; z-index: 2; perspective: 900px; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .portrait {
   display: block; width: 100%; height: auto; border-radius: 48% 48% 0 0; transform-origin: 50% 100%;
   -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 98%); mask-image: linear-gradient(to bottom, #000 70%, transparent 98%);
@@ -402,8 +402,8 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
   .stats__list { grid-template-columns: 1fr; }
   .hero { min-height: 0; display: flex; flex-direction: column; align-items: center; padding-top: 112px; gap: 0; }
   .hero__tag { top: 70px; font-size: 11px; }
-  .hero__name { position: relative; top: auto; font-size: 31vw; }
-  .portrait-stage { position: relative; left: auto; bottom: auto; translate: none; width: min(100%, 440px); margin-top: -7vw; }
+  .hero__name { position: relative; top: auto; font-size: 19vw; }
+  .portrait-stage { position: relative; left: auto; bottom: auto; translate: none; width: min(100%, 440px); margin-top: -1vw; }
   .hero__intro { position: relative; left: auto; bottom: auto; max-width: none; padding-inline: var(--gutter); margin-top: -8px; z-index: 3; }
   .hero__cue { position: relative; right: auto; bottom: auto; align-self: flex-start; margin: 20px var(--gutter) 8px; }
   .buddy__say { font-size: 12.5px; padding: 7px 12px; border-radius: 14px; line-height: 1.25; max-width: calc(100vw - 190px); }
@@ -430,7 +430,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
 
 <main id="top">
   <section class="hero" aria-label="Intro">
-    <h1 class="hero__name">Shiza</h1>
+    <h1 class="hero__name">Shizanourin</h1>
     <span class="hero__tag"><i></i>Cyber · Projects · Content</span>
     <div class="portrait-stage" id="portrait-stage">
       <img class="portrait" id="portrait" src="assets/striped-turn/front.png" alt="Illustrated portrait of Shizanourin" width="1086" height="1448">
