@@ -56,7 +56,7 @@ main, .bar, footer { position: relative; z-index: 1; }
   font-weight: 800; font-size: clamp(110px, 26vw, 330px); line-height: .8; letter-spacing: -.035em;
   font-variation-settings: "wght" 800, "wdth" 75; white-space: nowrap; user-select: none;
 }
-.portrait-stage { position: absolute; left: 50%; bottom: 0; translate: -50% 0; width: clamp(320px, 44vw, 600px); max-width: 100%; z-index: 2; perspective: 900px; }
+.portrait-stage { position: absolute; left: 50%; bottom: 0; translate: -50% 0; width: clamp(320px, 44vw, 600px); max-width: 100%; z-index: 2; perspective: 900px; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .portrait {
   display: block; width: 100%; height: auto; transform-origin: 50% 100%;
   -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 98%); mask-image: linear-gradient(to bottom, #000 70%, transparent 98%);
@@ -1007,10 +1007,33 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
       for (let i = 0; i < TURN.count; i++) load(i);
     }).catch(() => {});
     const look = x => { const r = cvs.getBoundingClientRect(), mid = r.left + r.width / 2; target = clamp(x < mid ? (x - mid) / Math.max(mid, 1) : (x - mid) / Math.max(innerWidth - mid, 1), -1, 1); };
-    addEventListener('pointermove', e => look(e.clientX), { passive: true });
+    addEventListener('pointermove', e => { if (e.pointerType === 'mouse') look(e.clientX); }, { passive: true });
     root.addEventListener('pointerleave', () => { target = 0; });
-    // Touch screens have no hover, so she glances around on her own.
-    if (!fine) { const glances = [-.8, 0, .7, 0, .5, 0]; let g = 0; setInterval(() => { if (!document.hidden) target = glances[g++ % glances.length]; }, 2400); }
+
+    // Touch: tap to make her look that way, swipe sideways to turn her head with your finger.
+    // The stage only claims horizontal drags (touch-action: pan-y), so vertical scrolling still works.
+    const stage = document.getElementById('portrait-stage');
+    let touchId = null, startX = 0, startTarget = 0, heldUntil = 0;
+    stage.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse') return;
+      touchId = e.pointerId; startX = e.clientX; heldUntil = Infinity;
+      const r = stage.getBoundingClientRect();
+      target = clamp((e.clientX - (r.left + r.width / 2)) / (r.width / 2), -1, 1); // tap: glance toward the finger
+      startTarget = target;
+    });
+    stage.addEventListener('pointermove', e => {
+      if (e.pointerId !== touchId) return;
+      target = clamp(startTarget + (e.clientX - startX) / (stage.offsetWidth * .5), -1, 1); // swipe: drag the turn
+    });
+    const release = e => { if (e.pointerId !== touchId) return; touchId = null; heldUntil = performance.now() + 2500; };
+    stage.addEventListener('pointerup', release);
+    stage.addEventListener('pointercancel', release);
+
+    // With no hover, she glances around on her own, pausing while someone is touching her.
+    if (!fine) {
+      const glances = [-.8, 0, .7, 0, .5, 0]; let g = 0;
+      setInterval(() => { if (!document.hidden && touchId === null && performance.now() > heldUntil) target = glances[g++ % glances.length]; }, 2400);
+    }
     loopFns.push(() => { cur += (target - cur) * .12; paint(); });
   };
   fetch('assets/turn/frames.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null)
