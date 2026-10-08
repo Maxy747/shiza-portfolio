@@ -1,5 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Shizanourin T.A. — project management specialist in Kuwait City, with a background in cybersecurity and a love for making content.">
+<meta name="theme-color" content="#ede1c8">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Shizanourin T.A.">
+<meta property="og:description" content="Project management, cybersecurity and content creation. Based in Kuwait City.">
+<meta property="og:url" content="https://maxy747.github.io/shiza-portfolio/">
+<meta property="og:image" content="https://maxy747.github.io/shiza-portfolio/assets/shiza-about.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/ig/pfp.webp" type="image/webp">
+<link rel="apple-touch-icon" href="assets/ig/pfp.webp">
 <title>Shizanourin T.A.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,9 +40,10 @@
   color-scheme: light;
 }
 * { box-sizing: border-box; }
-html.lenis, html.lenis body { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto !important; }
-.lenis.lenis-stopped { overflow: hidden; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+html, body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
 body { background: var(--sand); color: var(--ink); font-family: var(--font); font-size: 17px; line-height: 1.55; padding-inline: 0; padding-block: 0; overflow-x: clip; }
 h1, h2, h3 { margin: 0; text-wrap: balance; }
 p { margin: 0; }
@@ -369,7 +383,8 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 </style>
-
+</head>
+<body>
 <header class="bar">
   <a class="name" href="#top">Shizanourin T.A.</a>
   <nav>
@@ -491,8 +506,8 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
                   <span class="ig__follow">Follow</span>
                   <div class="ig__tabs" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
                   <div class="ig__grid">
-                    <img src="assets/ig/0.webp" alt="" width="240" height="320"><img src="assets/ig/1.webp" alt="" width="240" height="320"><img src="assets/ig/2.webp" alt="" width="240" height="320">
-                    <img src="assets/ig/3.webp" alt="" width="240" height="320"><img src="assets/ig/4.webp" alt="" width="240" height="320"><img src="assets/ig/5.webp" alt="" width="240" height="320">
+                    <img src="assets/ig/0.webp" alt="" width="240" height="320" loading="lazy"><img src="assets/ig/1.webp" alt="" width="240" height="320" loading="lazy"><img src="assets/ig/2.webp" alt="" width="240" height="320" loading="lazy">
+                    <img src="assets/ig/3.webp" alt="" width="240" height="320" loading="lazy"><img src="assets/ig/4.webp" alt="" width="240" height="320" loading="lazy"><img src="assets/ig/5.webp" alt="" width="240" height="320" loading="lazy">
                   </div>
                 </div>
               </a>
@@ -750,14 +765,13 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
   <img class="buddy__face" src="assets/ig/pfp.webp" alt="" width="58" height="58">
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
 (() => {
   // Head-turn frames: set count to the number of frames in assets/turn/ (000.webp …) and front to the straight-on frame.
   const TURN = { count: 7, front: 3, src: i => `assets/turn/${String(i).padStart(3, '0')}.webp` };
   const root = document.documentElement;
-  let lenis = null; // smooth-scroll engine, set up below when motion is allowed
-  const goTo = y => lenis ? lenis.scrollTo(y, { duration: 1.4 }) : scrollTo({ top: typeof y === 'number' ? y : y.getBoundingClientRect().top + scrollY, behavior: 'smooth' });
+  // Native scrolling; in-page jumps glide via the browser's own smooth scroll.
+  const goTo = y => scrollTo({ top: typeof y === 'number' ? y : y.getBoundingClientRect().top + scrollY, behavior: 'smooth' });
   const motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (motion) root.classList.add('motion');
@@ -1144,21 +1158,6 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     about.style.clipPath = `inset(0 ${((1 - k) * 4).toFixed(2)}% round ${((1 - k) * 48).toFixed(1)}px)`;
   });
 
-  // smooth scrolling (Lenis): eased wheel scrolling, with in-page links routed through it
-  if (window.Lenis) {
-    lenis = new Lenis({ lerp: .09, smoothWheel: true, wheelMultiplier: 1 });
-    // Own frame loop, so nothing else on the page can ever stall scrolling.
-    requestAnimationFrame(function tick(t) { lenis.raf(t); requestAnimationFrame(tick); });
-    document.addEventListener('click', e => {
-      const a = e.target.closest('a[href^="#"]');
-      if (!a || a.classList.contains('to-top')) return;
-      const id = a.getAttribute('href');
-      const el = id === '#top' ? 0 : document.querySelector(id);
-      if (el === null) return;
-      e.preventDefault(); goTo(el);
-    });
-  }
-
   // hero parallax: the giant name drifts up slower than the page, the intro fades out
   const heroName = document.querySelector('.hero__name'), heroIntro = document.querySelector('.hero__intro'), heroCue = document.querySelector('.hero__cue');
   let lastHY = -1;
@@ -1172,3 +1171,5 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
   (function loop(t) { lookStep(); for (const f of loopFns) f(t); requestAnimationFrame(loop); })(performance.now());
 })();
 </script>
+</body>
+</html>
