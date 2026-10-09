@@ -1134,7 +1134,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     const load = i => imgs[i] || (imgs[i] = Object.assign(new Image(), { src: TURN.src(i), decoding: 'async' }));
     const ready = i => imgs[i]?.complete && imgs[i].naturalWidth > 0;
     let target = 0, cur = 0, shown = -1;
-    const draw = i => { c2.clearRect(0, 0, cvs.width, cvs.height); c2.globalAlpha = 1; c2.drawImage(imgs[i], 0, 0, cvs.width, cvs.height); drawBuddy(imgs[i]); };
+    const draw = i => { c2.clearRect(0, 0, cvs.width, cvs.height); c2.globalAlpha = 1; c2.drawImage(imgs[i], 0, 0, cvs.width, cvs.height); };
     const paint = () => {
       // Manifest frames carry their own head angle (-1 left … +1 right): show the closest one, crisp.
       // These are separately generated images, so blending two of them would double the features.
@@ -1203,6 +1203,28 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
       setInterval(() => { if (!document.hidden && touchId === null && performance.now() > heldUntil) target = glances[g++ % glances.length]; }, 2400);
     }
     loopFns.push(() => { cur += (target - cur) * .12; paint(); });
+
+    // The bubble's mini face has its own gaze: it looks at the pointer from where it sits in the corner.
+    // On touch screens there is no pointer to follow, so it mirrors the big portrait's glances.
+    const frameFor = v => {
+      if (TURN.positions) {
+        let best = TURN.front, bestD = Infinity;
+        TURN.positions.forEach((p, i) => { const d = Math.abs(p - v); if (d < bestD && ready(i)) { bestD = d; best = i; } });
+        return best;
+      }
+      return Math.round(v < 0 ? TURN.front * (1 + v) : TURN.front + (TURN.count - 1 - TURN.front) * v);
+    };
+    let bTarget = 0, bCur = 0, bShown = -1;
+    loopFns.push(() => {
+      if (!fine) bTarget = cur;
+      else if (ptr.active) {
+        const r = buddyFace.getBoundingClientRect(), cx = r.left + r.width / 2;
+        bTarget = clamp(ptr.x < cx ? (ptr.x - cx) / Math.max(cx, 1) : (ptr.x - cx) / Math.max(innerWidth - cx, 1), -1, 1);
+      } else bTarget = 0;
+      bCur += (bTarget - bCur) * .12;
+      const i = frameFor(bCur);
+      if (i !== bShown && ready(i)) { bShown = i; drawBuddy(imgs[i]); }
+    });
   };
   fetch('assets/striped-web/frames.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null)
     .then(j => {
