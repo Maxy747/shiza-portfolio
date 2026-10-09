@@ -840,7 +840,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
 <a class="btn to-top" href="#top">↑ Top</a>
 <div class="buddy" aria-live="polite">
   <span class="buddy__say">Hi, I'm Shiza!</span>
-  <img class="buddy__face" src="assets/ig/pfp.webp" alt="" width="58" height="58">
+  <canvas class="buddy__face" id="buddy-face" width="116" height="116" aria-hidden="true"></canvas>
 </div>
 
 <script>
@@ -1003,6 +1003,16 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
   };
   addEventListener('scroll', updateSay, { passive: true }); updateSay();
   new IntersectionObserver(([e]) => buddy.classList.toggle('is-shown', !e.isIntersecting), { threshold: .15 }).observe(document.querySelector('.hero'));
+  // The bubble's face is a mini copy of the hero portrait: same frame, cropped to her face.
+  const buddyFace = document.getElementById('buddy-face'), bctx = buddyFace.getContext('2d');
+  const drawBuddy = img => {
+    const w = img.naturalWidth, h = img.naturalHeight, s = w * .605;
+    bctx.clearRect(0, 0, buddyFace.width, buddyFace.height);
+    bctx.drawImage(img, w * .197, h * .073, s, s, 0, 0, buddyFace.width, buddyFace.height);
+  };
+  const buddyStart = new Image();
+  buddyStart.onload = () => drawBuddy(buddyStart);
+  buddyStart.src = TURN.src(TURN.front);
   const pupils = [...document.querySelectorAll('.pupil')];
   const eyes = { x: 0, y: 0 };
   const lookStep = () => {
@@ -1124,7 +1134,7 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
     const load = i => imgs[i] || (imgs[i] = Object.assign(new Image(), { src: TURN.src(i), decoding: 'async' }));
     const ready = i => imgs[i]?.complete && imgs[i].naturalWidth > 0;
     let target = 0, cur = 0, shown = -1;
-    const draw = i => { c2.clearRect(0, 0, cvs.width, cvs.height); c2.globalAlpha = 1; c2.drawImage(imgs[i], 0, 0, cvs.width, cvs.height); };
+    const draw = i => { c2.clearRect(0, 0, cvs.width, cvs.height); c2.globalAlpha = 1; c2.drawImage(imgs[i], 0, 0, cvs.width, cvs.height); drawBuddy(imgs[i]); };
     const paint = () => {
       // Manifest frames carry their own head angle (-1 left … +1 right): show the closest one, crisp.
       // These are separately generated images, so blending two of them would double the features.
